@@ -5,3 +5,6 @@ datasets
 pytorch_env
 models
 build
+correlation.egg-info
+demo-frames/
+models.zip

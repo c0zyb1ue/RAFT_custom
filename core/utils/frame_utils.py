@@ -2,7 +2,10 @@ import numpy as np
 from PIL import Image
 from os.path import *
 import re
+
 import cv2
+cv2.setNumThreads(0)
+cv2.ocl.setUseOpenCL(False)
 
 TAG_CHAR = np.array([202021.25], np.float32)
 
@@ -103,6 +106,13 @@ def readFlowKITTI(filename):
     flow = (flow - 2**15) / 64.0
     return flow, valid
 
+def readDispKITTI(filename):
+    disp = cv2.imread(filename, cv2.IMREAD_ANYDEPTH) / 256.0
+    valid = disp > 0.0
+    flow = np.stack([-disp, np.zeros_like(disp)], -1)
+    return flow, valid
+
+
 def writeFlowKITTI(filename, uv):
     uv = 64.0 * uv + 2**15
     valid = np.ones([uv.shape[0], uv.shape[1], 1])
@@ -120,5 +130,8 @@ def read_gen(file_name, pil=False):
         return readFlow(file_name).astype(np.float32)
     elif ext == '.pfm':
         flow = readPFM(file_name).astype(np.float32)
-        return flow[:, :, :-1]
+        if len(flow.shape) == 2:
+            return flow
+        else:
+            return flow[:, :, :-1]
     return []
