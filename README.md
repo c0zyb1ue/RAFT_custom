@@ -1,4 +1,4 @@
-# RAFT
+# RAFT custom
 
 This repository contains original RAFT contents and optical flow output generating source codes for personal project.
 
